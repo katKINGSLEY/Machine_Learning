@@ -1,0 +1,185 @@
+---
+title: "Homework 2"
+author: "Kathryn Kingsley"
+output:
+  html_document:
+    df_print: paged
+    dpf_document: default
+  editor_options:
+    chunk_output_type: inline
+  pdf_document: default
+---
+
+### **PROBLEM 1**
+#### *Step 1*
+
+Load ISLR library, use names() and summary() to obtain basic info. Then, divide Auto data set into train and test sets with 75% train.
+
+```{r}
+library(ISLR)
+names(Auto)
+summary(Auto)
+set.seed(1234)
+i <- sample(1:nrow(Auto), nrow(Auto)*0.75, replace = FALSE)
+train <- Auto[i,]
+test <- Auto[-i,]
+plot(Auto$horsepower, Auto$mpg)
+```
+
+
+#### *Step 2*
+
+Perform simple linear regression on train data and evaluate results. Then, calculate MSE.
+First, I created a linear model of mpg based off of horsepower using my train data.
+Then, I used what I learned in the train data to predict the outcome of my test data.
+Finally, I subtracted the actual data from what my model predicted and squared it to find the MSE.
+
+```{r}
+lm1 <- lm(mpg~horsepower, data = train)
+pred1 <- predict(lm1, train)
+mse1 <- mean((pred1 - train$mpg)^2)
+summary(lm1)
+print(paste("mse: ", mse1))
+```
+#### *Step 3*
+
+a. -0.156681*mpg + 39.648595
+b. There is a strong relationship between mpg and horsepower
+c. It is a negative correlation due to the negative slope.
+d. The RSE being 4.85 is good. It means our model fits. The R^2 of 0.61 isn't awful, but its preferred to be closer to one. An F-stat with a low p-value shows that there is a true relationship between horsepower and mpg.
+e. The MSE being nearly 26 indicates that the model was good, because the sum of the difference between predicted and observed were not that much.
+
+
+#### *Step 4*
+
+The blue line underfit the data, but this is common with linear regression.
+I predict the mpg of 98 horsepower will be around 25 mpg. If you look along the x axis, slightly before the 100, and go straight up to the blue line, that corresponds to almost exactly 25 mpg.
+```{r}
+plot(train$mpg~train$horsepower)
+abline(lm1, col=4)
+```
+
+
+#### *Step 5*
+
+The mse is very similar to the mse of the training data. 25.7172652597501 > 23.3917550461694
+
+```{r}
+pred2 <- predict(lm1, newdata = test)
+mse2 <- mean((pred2 - test$mpg)^2)
+print(paste("mse: ", mse2))
+```
+
+
+#### *Step 6*
+
+I see evidence of non linearity in the residuals. I want to see a fairly straight red line with evenly distributed points around it, and I am not seeing that at all. The line is curved, and the points are heavy on one end.
+
+```{r}
+par(mfrow = c(2,2))
+plot(lm1)
+```
+
+#### *Step 7*
+
+New R squared is almost 0.1 higher on the new model at 0.6975
+
+```{r}
+lm2 <- lm(log(mpg)~horsepower, data = train)
+summary(lm2)
+```
+#### *Step 8*
+
+This new line fits the data a bit better. There are less outliers now.
+
+```{r}
+plot(log(train$mpg)~train$horsepower)
+abline(lm2, col=3)
+```
+#### *Step 9*
+
+```{r}
+pred9 = predict(lm2, newdata = test)
+cor9 = cor(pred9, log(test$mpg))
+print(paste("Correlation: ", cor9))
+mse9 <- mean((pred9 - test$mpg)^2)
+print(paste("mse: ", mse9))
+
+```
+#### *Step 10*
+
+Lm2 compares to lm1 shows more evidence of linearity. It created more concise graphs.
+
+```{r}
+par(mfrow = c(2,2))
+plot(lm2)
+```
+
+### **PROBLEM 2**
+
+#### *Step 1*
+
+Use pairs() to find positive and negative correlation
+Positive:
+1. horsepower and displacement
+2. horsepower and weight
+3. weight and displacement
+
+Negative:
+1. mpg and weight
+2. horse power and acceleration
+3. mpg and displacement
+```{r}
+pairs(Auto, pch = 20)
+```
+#### *Step 2*
+
+Display correlation matrix
+Strongest positive correlation:
+1. cylinders and displacement = 0.9508233
+2. displacement and weight = 0.9329944
+Strongest negative correlation:
+1. weight and mpg = -0.8322442 
+2. cylinders and mpg = -0.7784268
+
+```{r}
+data(Auto)
+x <- Auto[1:8]
+cor(x, use = "complete")
+
+```
+
+#### *Step 3*
+
+Convert origin to factor.Create multiple linear regression
+Weight, year, and origins 2 and 3 seem to have a significant relationship
+
+```{r}
+Auto$origin <- as.factor(Auto$origin)
+lm23 <- lm(mpg ~ horsepower + cylinders + displacement + weight + acceleration + year + origin, data = Auto)
+summary(lm23)
+```
+
+
+#### *Step 4*
+
+Plot the linear regression model. 
+The fit overall looks good.The first graph has a relatively straight line with somewhat even distribution of residuals. The same for graph 3. Graph 2 has most points following the trend until the very end.Graph 4 indicates a leverage point at item 14.
+
+```{r}
+par(mfrow = c(2,2))
+plot(lm23)
+Auto[14,]
+
+```
+
+#### *Step 5*
+Fit the models with interaction effects to try and outperform model lm23. I decided to use the interaction of the 2 variables indicated to be of most importance coupled with all of the other variables alone. Anova indicates that this new regression is a better fit and outperforms the model in step 3.
+
+```{r}
+lm25 <- lm(mpg ~ horsepower + cylinders + acceleration + year + origin + weight *  displacement , data = Auto)
+summary(lm25)
+anova(lm23, lm25)
+
+```
+
