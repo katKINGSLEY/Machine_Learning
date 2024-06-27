@@ -15,7 +15,7 @@ The [notebook](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Assignm
 
 ### Project 1
 
-A Titanic survival rate dataset is used to compare [logistic regression](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/LogisticRegression/) and [Naive Bayes](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/NaiveBayes/) in both C++ and R. While it was a lot more work to implement these algorithms in C++, the runtime was much faster. [Here](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/ML_proj1_essay_KLK170230.pdf) is a paper outlining the full comparison.
+A Titanic survival rate dataset is used to compare [logistic regression](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/LogisticRegression/) and [Naive Bayes](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/NaiveBayes/) in both C++ and R. Implementing in R was much simpler than the C++ program, and the runtime was much faster! [Here](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/ML_proj1_essay_KLK170230.pdf) is a paper outlining the full comparison.
 
 ### Project 2
 
