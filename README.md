@@ -15,4 +15,8 @@ The [notebook](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Assignm
 
 ### Project 1
 
-This project uses a Titanic survival rate dataset to compare [logistic regression](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/LogisticRegression/) and [Naive Bayes](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/NaiveBayes/) in both C++ and R. While it was a lot more work to implement these algorithms in C++, the runtime was much faster. [Here](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/ML_proj1_essay_KLK170230.pdf) is a paper outlining the full comparison.
+A Titanic survival rate dataset is used to compare [logistic regression](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/LogisticRegression/) and [Naive Bayes](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/NaiveBayes/) in both C++ and R. While it was a lot more work to implement these algorithms in C++, the runtime was much faster. [Here](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project1/ML_proj1_essay_KLK170230.pdf) is a paper outlining the full comparison.
+
+### Project 2
+
+Implemented in R, the regression [notebook](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project2/regression.pdf) uses linear regression, kNN, and decision tree algorithms to determine the price of diamonds. The classification [notebook](https://github.com/katKINGSLEY/Machine_Learning/blob/main/Project2/classification.pdf) uses logistic regression, Naive Bayes, and decision trees - random forest to attempt to classify whether or not a song will be popular or not.  
