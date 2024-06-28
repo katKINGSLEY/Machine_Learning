@@ -1,0 +1,141 @@
+---
+title: "Homework 3"
+author: "Kathryn Kingsley"
+output:
+  html_document:
+    df_print: paged
+    dpf_document: default
+  editor_options:
+    chunk_output_type: inline
+  pdf_document: default
+---
+
+##### **Description**
+
+In this R notebook, I perform logistic regression on data regarding acceptance data
+for Indian graduate school
+
+
+##### **Step 1**
+
+Load data and look at first few rows.I am assuming that the data file is in the same folder
+as this Rmd file.
+
+```{r}
+df <- read.csv("Admission_Predict.csv")
+df <- data.frame(df)
+head(df)
+```
+
+##### **Step 2**
+a.
+```{r}
+df$Research <- as.factor(df$Research)
+```
+b.
+```{r}
+df2 <- df[2:9]
+```
+c.
+```{r}
+df2$Admit <-ifelse(df2$Chance.of.Admit > 0.5, 1, 0)
+```
+d.
+```{r}
+names(df2)
+```
+e.
+```{r}
+summary(df2)
+```
+f. This is an unbalanced data set. As it is set, only 35/400 students are set to not be admitted.
+```{r}
+sum(df2$Admit == 0)
+```
+
+
+##### **Step 3**
+
+The box plots indicate that  both scores, GRE and TOEFL are likely to be good predictors as the mean for those
+admitted is significantly higher. The only issue is that the weight of those admitted is much greater, so
+I know the data is skewed.
+
+```{r,warning=FALSE}
+par(mfrow = c(1,2))
+boxplot(df2$Admit, df2$GRE.Score, col="red", xlab="Admit", ylab="GRE Score", main = "GRE Comparison", varwidth=TRUE)
+boxplot(df2$Admit, df2$TOEFL.Score,col="blue", xlab="Admit", ylab="TOEFL Score", main = "TOEFL Comparison", varwidth=TRUE)
+```
+
+##### **Step 4**
+```{r}
+set.seed(1234)
+i <- sample(1:nrow(df2), 0.75*nrow(df2), replace=FALSE)
+train <- df2[i,]
+test <- df2[-i,]
+```
+
+##### **Step 5**
+
+I received the error "glm.fit: algorithm did not convergeglm.fit: fitted probabilities numerically 0 or 1 occurred". I think I got this error because there was a perfect separation. I have already categorized the data 
+by chance of admit.
+```{r}
+glm5 <- glm(Admit~., data=train, family="binomial")
+```
+
+##### **Step 6**
+```{r}
+glm6 <- glm(Admit~.-Chance.of.Admit, data=train, family="binomial")
+```
+
+##### **Step 7**
+"response" gets probabilities out of the model- outputs log odds
+ifelse converts to 0 or 1 based on <>0.5
+A correlation of 0.648545 is neither high nor low indicating moderate positive relationship between 
+the predicted probabilities from our model and the actual chance of admittance for our test data.
+```{r}
+probs <- predict(glm6, newdata = test, type="response")
+cor(probs, test$Chance.of.Admit)
+
+```
+
+##### **Step 8**
+
+The accuracy is really good! So our model made good predictions.
+```{r}
+pred <- ifelse(probs>0.5, 1,0)
+table(pred, as.integer(test$Admit))
+acc <- mean(pred==as.integer(test$Admit))
+acc
+```
+
+##### **Step 9**
+ROC and AUC- 
+ROC: y axis is TP and x axis is FP
+AUC is metric that tells us if a classifier has predictive value or not.0.938949938949939 means that 
+we have a classifier that is very close to perfect. That is evident by the line that goes straight up initially
+
+```{r}
+library(ROCR)
+pr <- prediction(probs, test$Admit)
+prf <-performance(pr, measure = "tpr", x.measure = "fpr")
+plot(prf)
+auc <- performance(pr, measure = "auc")
+auc <-auc@y.values[[1]]
+print(paste("AUC: ", auc))
+```
+
+##### **Step 10**
+SOP represents Statement of Purpose and Letter of Recommendation **Strength**
+
+a.This graph shows that those who were admitted had a higher likelihood of having gotten/given a strong
+letter. The median value for those admitted was near 3.5. Since not many people didn't get accepted, 
+the box plot for this category is small.
+```{r}
+boxplot(df2$Admit, df2$SOP, col="red", xlab="Admit", ylab="SOP", main = "Admit Plot", varwidth=TRUE)
+```
+
+b. This graph shows that having research experience impacted the SOP in a positive way. Those who did research got stronger letters. This graph shows a stronger relationship because the number of those who did research and who did not do research are comparable. 
+```{r}
+boxplot(df2$Research, df2$SOP,col="blue", xlab="Research", ylab="SOP", main = "Research Plot", varwidth=TRUE)
+```
+
